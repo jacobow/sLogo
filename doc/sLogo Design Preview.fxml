@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.media.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <TabPane prefHeight="802.0" prefWidth="1279.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Untitled Tab 1">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="237.0" prefWidth="466.0">
+                     <children>
+                        <VBox prefHeight="769.0" prefWidth="1279.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <MenuBar>
+                                <menus>
+                                  <Menu mnemonicParsing="false" text="File">
+                                    <items>
+                                      <MenuItem mnemonicParsing="false" text="Close" />
+                                    </items>
+                                  </Menu>
+                                  <Menu mnemonicParsing="false" text="View">
+                                    <items>
+                                      <MenuItem mnemonicParsing="false" text="Delete" />
+                                    </items>
+                                  </Menu>
+                                  <Menu mnemonicParsing="false" text="Help">
+                                    <items>
+                                      <MenuItem mnemonicParsing="false" text="About" />
+                                    </items>
+                                  </Menu>
+                                </menus>
+                              </MenuBar>
+                              <HBox prefHeight="881.0" prefWidth="1280.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <VBox prefHeight="755.0" prefWidth="199.0">
+                                       <children>
+                                          <ToolBar prefHeight="10.0" prefWidth="123.0">
+                                             <items>
+                                                <Label prefHeight="14.0" prefWidth="97.0" text="Command History" wrapText="true">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                             </items>
+                                          </ToolBar>
+                                          <ListView editable="true" prefHeight="729.0" prefWidth="48.0" />
+                                       </children>
+                                    </VBox>
+                                    <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="722.0" prefWidth="864.0">
+                                      <items>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="489.0" prefWidth="862.0">
+                                             <children>
+                                                <ToolBar prefHeight="26.0" prefWidth="862.0" AnchorPane.bottomAnchor="435.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                   <items>
+                                                      <Label prefHeight="14.0" prefWidth="97.0" text="Display" wrapText="true">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Button mnemonicParsing="false" text="Play">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" text="Stop">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" text="Add Turtle">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Button>
+                                                      <Button mnemonicParsing="false" text="Do Some Other Unexpected Shit">
+                                                         <font>
+                                                            <Font size="11.0" />
+                                                         </font>
+                                                      </Button>
+                                                   </items>
+                                                </ToolBar>
+                                             </children>
+                                          </AnchorPane>
+                                        <AnchorPane maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="251.0" prefWidth="862.0">
+                                             <children>
+                                                <TextArea layoutY="50.0" prefHeight="261.0" prefWidth="862.0" promptText="&gt;&gt; Command Line" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                                             </children>
+                                          </AnchorPane>
+                                      </items>
+                                    </SplitPane>
+                                    <VBox prefHeight="755.0" prefWidth="196.0" HBox.hgrow="ALWAYS">
+                                       <children>
+                                          <ToolBar prefHeight="10.0" prefWidth="123.0">
+                                             <items>
+                                                <Label prefHeight="14.0" prefWidth="97.0" text="Workspace" wrapText="true">
+                                                   <font>
+                                                      <Font size="11.0" />
+                                                   </font>
+                                                </Label>
+                                             </items>
+                                          </ToolBar>
+                                          <ListView editable="true" prefHeight="729.0" prefWidth="302.0" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="126.0" prefWidth="1280.0" style="-fx-background-color: #F1F1F1;">
+                                 <children>
+                                    <ToolBar prefHeight="18.0" prefWidth="1295.0">
+                                       <items>
+                                          <Label prefHeight="6.0" prefWidth="221.0" text="Current Status of Program">
+                                             <padding>
+                                                <Insets left="-8.0" />
+                                             </padding>
+                                             <font>
+                                                <Font size="10.0" />
+                                             </font>
+                                          </Label>
+                                       </items>
+                                    </ToolBar>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Untitled Tab 2">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</Pane>

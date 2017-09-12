@@ -1,0 +1,298 @@
+
+package application.gui.display;
+
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import application.gui.SLogoToolbar;
+import application.gui.SLogoUIAreaWithFileIO;
+import application.gui.interfaces.Display;
+import application.gui.interfaces.UndoRedoCommandLine;
+import back_end.model.Model;
+import back_end.model.Subject;
+import back_end.model.Turtle;
+import javafx.scene.control.Slider;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+
+
+/**
+ *
+ * @author michaelseaberg
+ *
+ */
+
+public class SLogoDisplay extends SLogoUIAreaWithFileIO implements Display {
+	private int numTurtles;
+	private AnchorPane turtleDisplay;
+	private Model mySLogoModel;
+	private List<Turtle> myTurtleList;
+	private Map<Turtle,TurtleFXShell> myTurtleMap;
+	private TurtleFXAnimator myAnimator;
+	private UndoRedoCommandLine myCommandLine;
+	private SLogoDisplayListenerHandler myChangeListener;
+	private int selectedTurtles;
+
+	private String prefFileLOGOInfo;
+
+	private int currRed,currGreen,currBlue;
+
+	protected void setSelectedTurtles(int selectedTurtles) {
+		this.selectedTurtles = selectedTurtles;
+	}
+
+	protected int getSelectedTurtles() {
+		return selectedTurtles;
+	}
+
+	public List<Turtle> getMyTurtleList() {
+		return myTurtleList;
+	}
+
+	public Map<Turtle, TurtleFXShell> getMyTurtleMap() {
+		return myTurtleMap;
+	}
+
+	public SLogoDisplay(double prefWidth, double prefHeight, Model sLogoModel,UndoRedoCommandLine commandLine){
+		myArea = new VBox();
+		setCSSStyle();
+		myArea.setPrefHeight(prefHeight);
+		myArea.setPrefWidth(prefWidth);
+		this.setSubject(sLogoModel);
+		numTurtles = 0;
+		myTurtleList = new ArrayList<Turtle>();
+		myTurtleMap = new HashMap<Turtle,TurtleFXShell>();
+		myCommandLine = commandLine;
+		selectedTurtles = 0;
+		myChangeListener = new SLogoDisplayListenerHandler(this);
+		((VBox) myArea).setFillWidth(true);
+		initialize();
+	}
+
+	private void initialize(){
+		mySLogoModel.register(this);
+		SLogoToolbar displayToolbar = new SLogoToolbar(myArea.getWidth(),"Display");
+		displayToolbar.getItems().add(makeButton("Add Turtle", e->addTurtleToModel(), 120, 20));
+		displayToolbar.getItems().add(makeButton("Toggle Pen", e->turtlePenToggle(), 120, 20));
+		displayToolbar.getItems().add(makeButton("Clear", e->clearDisplay(), 120, 20));
+		displayToolbar.getItems().add(makeButton("Undo", e->undoCommand(),120,20));
+		displayToolbar.getItems().add(makeButton("Redo", e->redoCommand(),120,20));
+		displayToolbar.getItems().add(makeButton("Play",e->myAnimator.getCurrentAnimation().play()));
+		displayToolbar.getItems().add(makeButton("Pause",e->myAnimator.getCurrentAnimation().pause()));
+		displayToolbar.getItems().add(makeButton("Skip",e->skipAll()));
+		displayToolbar.getItems().add(makeButton("Save Prefs",e->saveFile(PREFERENCES_EXTENSION,DEFAULT_FILE_LOCATION),120,20));
+
+		Slider animationSpeedSlider = displayToolbar.addSlider("Animation Speed",100,3000,1000);
+		turtleDisplay = new AnchorPane();
+		turtleDisplay.setPrefSize(myArea.getPrefWidth(), myArea.getPrefHeight()-displayToolbar.getPrefHeight());
+		setBackgroundColor(255,255,255);
+		myAnimator = new TurtleFXAnimator(myArea.getPrefWidth(),myArea.getPrefHeight()-displayToolbar.getPrefHeight());
+		myAnimator.linkAnimationSpeed(animationSpeedSlider);
+		turtleDisplay.getChildren().add(myAnimator);
+		myArea.getChildren().add(turtleDisplay);
+		myArea.getChildren().add(displayToolbar);
+		mySLogoModel.notifyObservers();
+
+		mySLogoModel.getBackgroundColor().addListener(myChangeListener.getBackgroundColorListener());
+
+	}
+	private void skipAll(){
+		myAnimator.skipAll();
+	}
+	//Made by Walker:
+	private void undoCommand(){
+		//TODO: Set animation speed to ZERO/INFINITE (no animation)
+		myCommandLine.undo();
+	}
+	private void redoCommand(){
+		myCommandLine.redo();
+	}
+
+	protected void setBackgroundColor(int r, int g, int b){
+		currRed = r;
+		currGreen = g;
+		currBlue = b;
+		turtleDisplay.setBackground(new Background(new BackgroundFill(Color.rgb(r,g,b), null, null)));
+	}
+
+	// ^^ Michael don't worry about these. I'm working on them.
+
+
+	//TODO: May need to be modfied later to not get just the latest turtle but the turtle of your choice
+	private void turtlePenToggle() {
+		Turtle turtleToMove = myTurtleList.get(myTurtleList.size()-1);
+		if(turtleToMove.getState().isPenUp()){
+			myCommandLine.setCommandImmediately(myCommandLine.getResources().getString("PenDown").split("\\|")[0]);
+		}
+		else{
+			myCommandLine.setCommandImmediately(myCommandLine.getResources().getString("PenUp").split("\\|")[0]);
+		}
+
+	}
+
+	private void clearDisplay(){
+		//need to fix clear upon being in center of screen
+		myAnimator.clearScreen();
+		//		for(int i=0; i<myTurtleList.size(); i++){
+		//			if(!(myTurtleList.get(i).getX() == 0 && myTurtleList.get(i).getY() == 0)){
+		//			myTurtleList.get(i).getState().dropPen();
+		//			myTurtleList.get(i).home();
+		//			}
+		//		}
+
+		//mySLogoModel.notifyObservers();
+
+	}
+	//TODO: PseudoCommands
+	private void addTurtleToModel(){
+		mySLogoModel.addTurtle();
+		mySLogoModel.notifyObservers();
+	}
+	//TODO: Psuedocommand to start
+	private void addTurtleToScreen(Turtle turtle){
+		TurtleFXShell newTurtleShell = new TurtleFXShell(turtle);
+		myTurtleMap.put(turtle, newTurtleShell);
+		newTurtleShell.setLayoutX((turtleDisplay.getPrefWidth() / 2 - newTurtleShell.getBoundsInLocal().getWidth() / 2));
+		newTurtleShell.setLayoutY((turtleDisplay.getPrefHeight() / 2  - newTurtleShell.getBoundsInLocal().getHeight() / 2));
+		newTurtleShell.setOnMouseClicked(myChangeListener.getTurtleSelectionHandler(newTurtleShell));
+		newTurtleShell.hoverProperty().addListener(myChangeListener.getHoverListener(newTurtleShell));
+		turtleDisplay.getChildren().add(newTurtleShell);
+		numTurtles += 1;
+	}
+
+	public void update(){
+		//If we ever need to delete turtles, make copy of myTurtleList before fetching update, then compare two lists to see which turtle is missing, then
+		//delete that missing turtle from the map.
+		//myTurtleList is not doing anything here besides getting an update. If size of the list is stored locally, it may not be necessary to use this List.
+		myTurtleList = mySLogoModel.getUpdate(this).getTurtles();
+		int tempSpeed = myAnimator.getMyAnimationSpeed();
+		if(mySLogoModel.isClear()){
+			myAnimator.setAnimationSpeed(10);
+			clearDisplay();
+			return;
+		}
+<<<<<<< HEAD
+
+=======
+>>>>>>> 42bbd9fb20b0e2da06728c1085f3102a130bb158
+		if (myTurtleList.size() > numTurtles){
+			addTurtleToScreen(myTurtleList.get(myTurtleList.size()-1));
+		}
+		//need to create a queue of animations-what is happening is that for repeat, each time a new command is used, this method is called.
+		//For each instance of this method, there is a new set of animations that can overlap
+		//overlapping animations=non fair share usage of turtle image
+		for(int i = 0; i < myTurtleList.size(); i++){
+			TurtleFXShell temporaryShell = myTurtleMap.get(myTurtleList.get(i));
+			///if(!temporaryShell.getTurtleObject().getPaths().isEmpty()){
+			myAnimator.createAnimation(temporaryShell);
+			//}
+		}
+
+		myAnimator.setAnimationSpeed(tempSpeed);
+
+	}
+
+	public UndoRedoCommandLine getMyCommandLine() {
+		return myCommandLine;
+	}
+
+	@Override
+	public void setSubject(Subject sub) {
+		mySLogoModel = (Model) sub;
+
+	}
+
+	/**
+	 * @deprecated SLogoUIAreaWithFileIO needs to be refactored
+	 */
+	@Override
+	public void readHistoryFile(String oneHistoryElement) {
+		// TODO Auto-generated method stub
+	}
+
+
+	/**
+	 * @deprecated SLogoUIAreaWithFileIO needs to be refactored
+	 */
+	@Override
+	public void readFunctionsFile(String functionName, String variableValue, String functionValue)
+			throws IOException {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	/**
+	 * @deprecated SLogoUIAreaWithFileIO needs to be refactored
+	 */
+	@Override
+	public void readPreferencesFile(String nextLine, boolean firstTime) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void savePreferencesFile(PrintWriter fileWriter) {
+		fileWriter.println("setpalette "+ 10 + " " + currRed + " " + currGreen + " " + currBlue);
+		fileWriter.println("setbg 10");
+		for(int i=0;i<myTurtleList.size();i++){
+			if(myTurtleMap.get(myTurtleList.get(i))!=null){
+				fileWriter.println("Tell [ " +i+" ]");													//Make the first turtle
+				fileWriter.println("setpc "+myTurtleMap.get(myTurtleList.get(i)).getPenColor());		//PenColor set
+				fileWriter.println("setsh "+myTurtleMap.get(myTurtleList.get(i)).getTurtleObject().getState().getTurtleShape().intValue()); //Shape Set
+			}
+		}
+		//Activate turtles
+		fileWriter.println("Tell [ ]");
+		fileWriter.print("Tell [ ");
+		for(int i=0;i<myTurtleList.size();i++){
+			if(myTurtleMap.get(myTurtleList.get(i))!=null && myTurtleMap.get(myTurtleList.get(i)).getMySelectionStatus()){
+				fileWriter.print(i+" ");
+			}
+		}
+		fileWriter.println("]");
+		fileWriter.println(NEW_ELEMENT_MAGIC_PHRASE_2);
+		saveLOGOFile(fileWriter);
+		fileWriter.println(NEW_ELEMENT_MAGIC_PHRASE_2);
+		fileWriter.println(myCommandLine.getResources().getBaseBundleName());
+
+	}
+
+	private void saveLOGOFile(PrintWriter fileWriter){
+		chooseFile(true);
+		fileWriter.println(prefFileLOGOInfo);
+	}
+
+	/**
+	 * @deprecated SLogoUIAreaWithFileIO needs to be refactored
+	 */
+	@Override
+	public void saveFunctionsFile(PrintWriter fileWriter) {
+		// TODO Auto-generated method stub
+
+	}
+
+	/**
+	 * @deprecated SLogoUIAreaWithFileIO needs to be refactored
+	 */
+	@Override
+	public void saveHistoryFile(PrintWriter fileWriter) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void readLOGOFile(String oneLOGOElement) {
+		prefFileLOGOInfo+=oneLOGOElement+"\n";
+	}
+
+}

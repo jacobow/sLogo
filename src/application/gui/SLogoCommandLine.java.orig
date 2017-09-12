@@ -1,0 +1,142 @@
+package application.gui;
+
+import application.gui.interfaces.CommandLine;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
+<<<<<<< HEAD
+import javafx.scene.input.MouseEvent;
+=======
+>>>>>>> 7dd813dbb28356c3d4c9df8140abfef37f361bb5
+import javafx.scene.layout.FlowPane;
+
+/**
+ * 
+ * @author Walker Eacho
+ *
+ */
+public class SLogoCommandLine extends SLogoVBox implements CommandLine {
+	public static final double TEXTAREA_HEIGHT_PERCENTAGE = 0.8;
+	public static final double TEXTAREA_WIDTH_PERCENTAGE = 0.5;
+	public static final double BUTTON_HEIGHT_PERCENTAGE = 1-TEXTAREA_HEIGHT_PERCENTAGE;
+	public static final double HISTORY_WIDTH_PERCENTAGE = 1-TEXTAREA_WIDTH_PERCENTAGE;
+	
+	private SLogoHistory myHistory;
+	private boolean commandReady;
+<<<<<<< HEAD
+	private Button submitCommandButton;
+=======
+	private Button submitCommand;
+>>>>>>> 7dd813dbb28356c3d4c9df8140abfef37f361bb5
+	private TextArea commandLine;
+	private String[] currentCommand;
+	
+	SLogoCommandLine(double prefWidth, double prefHeight){
+		this.setPrefHeight(prefHeight);
+		this.setPrefWidth(prefWidth);
+		myHistory = new SLogoHistory();	
+<<<<<<< HEAD
+		myHistory.setPrefHeight(prefHeight);
+		myHistory.setPrefWidth(HISTORY_WIDTH_PERCENTAGE);
+		setHistoryOnMouseClick();
+		initializeTextAreaAndHistory(prefWidth, prefHeight);
+=======
+		initializeTextArea(prefWidth, prefHeight);
+>>>>>>> 7dd813dbb28356c3d4c9df8140abfef37f361bb5
+		initializeCommandButton(prefWidth, prefHeight);
+		
+	}
+
+	private void setHistoryOnMouseClick() {
+		myHistory.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			public void handle(MouseEvent e){
+				if(!commandLine.getText().isEmpty()){
+					commandLine.appendText("\n");
+				}
+				if(myHistory.getSelectionModel().getSelectedItem()!=null){
+					commandLine.appendText(myHistory.getSelectionModel().getSelectedItem());
+				}
+			}
+		});
+	}
+
+	private void initializeCommandButton(double prefWidth, double prefHeight) {
+<<<<<<< HEAD
+		submitCommandButton = makeButton("Submit",e->pressSubmitAction(),prefWidth/2,BUTTON_HEIGHT_PERCENTAGE*prefHeight);
+		commandReady=false;
+		submitCommandButton.setPrefHeight(BUTTON_HEIGHT_PERCENTAGE*prefHeight);
+		submitCommandButton.setPrefWidth(prefWidth);
+		this.getChildren().add(submitCommandButton);
+=======
+		submitCommand = makeButton("Submit",e->pressSubmitAction(),prefWidth/2,BUTTON_PERCENTAGE*prefHeight);
+		commandReady=false;
+		FlowPane asdf = new FlowPane();
+		asdf.getChildren().add(submitCommand);
+		myHistory.setPrefHeight(BUTTON_PERCENTAGE*prefHeight);
+		myHistory.setPrefWidth(prefWidth/2);
+		asdf.getChildren().add(myHistory);
+		this.getChildren().add(asdf);
+>>>>>>> 7dd813dbb28356c3d4c9df8140abfef37f361bb5
+	}
+
+	private void initializeTextAreaAndHistory(double prefWidth, double prefHeight) {
+		FlowPane textAndHistoryPane = new FlowPane();
+		commandLine = new TextArea();
+		commandLine.setPrefWidth(prefWidth*TEXTAREA_WIDTH_PERCENTAGE);
+		commandLine.setPrefHeight(TEXTAREA_HEIGHT_PERCENTAGE*prefHeight);
+		commandLine.setWrapText(false);
+		textAndHistoryPane.getChildren().add(commandLine);
+		textAndHistoryPane.getChildren().add(initializeHistory(prefWidth,prefHeight));
+		this.getChildren().add(textAndHistoryPane);
+	}
+	
+	private Node initializeHistory(double prefWidth, double prefHeight) {
+		myHistory = new SLogoHistory();
+		myHistory.setPrefWidth(HISTORY_WIDTH_PERCENTAGE*prefWidth);
+		myHistory.setPrefHeight(TEXTAREA_HEIGHT_PERCENTAGE*prefHeight);
+		setHistoryOnMouseClick();
+		return myHistory;
+	}
+
+	private void pressSubmitAction(){
+		String totalInput = commandLine.getText();
+		if(!totalInput.isEmpty()){
+			currentCommand = totalInput.split("\n");
+			commandLine.clear();
+			myHistory.addCommandToHistory(totalInput);
+			commandReady = true;
+		}else{
+			commandReady=false;
+		}
+	}
+
+	public boolean isCommandReady() {
+		return commandReady;
+	}
+
+	public void setCommandReady(boolean isCommandReady) {
+		commandReady=isCommandReady;
+		commandLine.clear();
+		
+	}
+
+	public String[] getCommand() {
+		return currentCommand;
+	}
+
+
+	public void setCommand(String command) {
+		commandLine.appendText(command);
+		commandReady = false;
+	}
+
+
+	public void setCommandImmediately(String command) {
+		currentCommand = command.split("\n");
+		commandReady=true;
+	}
+
+	
+
+}

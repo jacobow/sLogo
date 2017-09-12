@@ -1,0 +1,24 @@
+fd 3
+Happy Birthday Walker & Michael
+fd 12
+Happy Birthday Walker & Michael
+fd 1214
+Happy Birthday Walker & Michael
+pd
+rt 30
+fd 50000
+rt 30 50000
+rt 30 50000
+Happy Birthday Walker & Michael
+pd
+rt 30
+fd 50000
+rt 30 50000
+rt 30 50000
+Happy Birthday Walker & Michael
+pd
+rt 30
+fd 50000
+rt 30 fd 50000
+rt 30  fd 50000
+Happy Birthday Walker & Michael
